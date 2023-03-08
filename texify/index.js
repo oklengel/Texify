@@ -46,18 +46,9 @@ async function askBib() {
 
     bib = answers.bibl;
 }
-async function askSingle() {
-    const answers = await inquirer.prompt({
-        name: 'single',
-        type: 'bool',
-        message: 'single or multifile project?',
-        default() {
-            return 'n/Y';
-        },
-    });
 
-    singleProject = answers.single;
-}
+
+
 function render(key)
 {
     try {
@@ -131,9 +122,6 @@ await welcome();
 await askName();
 await askType();
 await askBib();
-await askSingle();
-    /*await question2();
-await question3();
-await question4();
-await question5();*/
+//await askSingle();
+
 generate();

@@ -1,2 +1,9 @@
 # Texify
- NodeJS based Tex project generator
+ NodeJS based LaTex project (documentation) generator
+
+# Usage:
+
+# todo
+- Examples & copy2dest
+- Doxygen functionality
+  
