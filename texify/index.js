@@ -2,7 +2,6 @@
 
 import inquirer from 'inquirer';
 import figchalk from 'figchalk'
-import { createSpinner } from 'nanospinner';
 import fs from 'fs'
 
 
@@ -47,33 +46,56 @@ async function askBib() {
     bib = answers.bibl;
 }
 
+async function askSingleFile() {
+    const answers = await inquirer.prompt({
+        name: 'sProj',
+        type: 'list',
+        message: 'Single Latex file?\n',
+        choices: [
+            'yes',
+            'no'
+
+        ],
+    });
+
+    singleProject = answers.sProj;
+}
 
 
-function render(key)
-{
+
+function render(key) {
     try {
         var filename = 'templates/' + key + '.json';
-        let rawdata= fs.readFileSync(filename);
+        let rawdata = fs.readFileSync(filename);
         let structure = JSON.parse(rawdata)
         var files = structure.files;
         console.log(files);
     } catch (error) {
         console.log("Dead by wrong name👻 " + "Key: " + key + " fn: " + filename)
     }
-   
+
 }
 
-function generate() {
-    console.log("Name: " + projectName);
-    console.log("Typ: " + projectType);
-    console.log("Single project: " + singleProject);
-    console.log("Bieber: " + bib);
-    //gen folder
-     var dir = projectName;
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
+function createAndChangeDirectory(projectName) {
+    try {
+        fs.mkdirSync(projectName);
+        process.chdir(projectName);
+        //console.log(`Created and changed directory to ${directoryName}`);
+    } catch (error) {
+        console.error(`Error creating or changing directory ☠️: ${error}`);
     }
+}
 
+
+function createProject() {
+    /* console.log("Name: " + projectName);
+     console.log("Typ: " + projectType);
+     console.log("Single project: " + singleProject);
+     console.log("Bieber: " + bib);*/
+
+    //create dir and cd into
+    createAndChangeDirectory(projectName);
+    /* 
     switch (projectType) {
         case "letter":
             break;
@@ -84,16 +106,50 @@ function generate() {
         case "book":
             break;
         case "beamer":
-            if(singleProject==true){
-                render("beamer_single");
-            }else{
-                render("beamer_multi");
-            }
+
             break;
 
         default:
             console.log("error on ....switch")
             break;
+    }*/
+
+
+    // write tex file
+    const texFile = `
+    \\documentclass{article}
+    \\begin{document}
+    Hello, world!
+    \\end{document}
+  `;
+    fs.writeFileSync(`${projectName}.tex`, texFile);
+
+    
+    //create folder structure
+    try {
+        fs.mkdirSync("Images");
+    } catch (error) {
+        console.error(`Error creating or directory ☠️: ${error}`);
+    }
+    //write build script
+    const buildScript = `
+    pdflatex ${projectName}.tex\n
+    bibtex ${projectName}.aux\n
+    pdflatex ${projectName}.tex\n
+    pdflatex ${projectName}.tex\n
+    `;
+
+    fs.writeFileSync(`${projectName}-build.sh`, buildScript);
+
+    //if splitted?
+    if (singleProject == "no" && projectType == "book") {
+        try {
+            fs.mkdirSync(projectName);
+            process.chdir(projectName);
+            //console.log(`Created and changed directory to ${directoryName}`);
+        } catch (error) {
+            console.error(`Error creating or changing directory ☠️: ${error}`);
+        }
     }
 
 }
@@ -122,6 +178,6 @@ await welcome();
 await askName();
 await askType();
 await askBib();
-//await askSingle();
+await askSingleFile();
 
-generate();
+createProject();

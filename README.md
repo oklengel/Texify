@@ -1,9 +1,8 @@
 # Texify
  NodeJS based LaTex project (documentation) generator
 
+⚠️ Windows is not supported. Use WSL instead.
 # Usage:
 
-# todo
-- Examples & copy2dest
-- Doxygen functionality
+
   
