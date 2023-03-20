@@ -38,9 +38,11 @@ async function askBib() {
         name: 'bibl',
         type: 'bool',
         message: 'bib?',
-        default() {
-            return 'N/y';
-        },
+        choices: [
+            'yes',
+            'no'
+
+        ],
     });
 
     bib = answers.bibl;
@@ -116,15 +118,15 @@ function createProject() {
 
 
     // write tex file
-    const texFile = `
-    \\documentclass{article}
+    var texFile = `
+    \\documentclass{ `+ projectType + `}
     \\begin{document}
     Hello, world!
     \\end{document}
   `;
     fs.writeFileSync(`${projectName}.tex`, texFile);
 
-    
+
     //create folder structure
     try {
         fs.mkdirSync("Images");
@@ -178,6 +180,8 @@ await welcome();
 await askName();
 await askType();
 await askBib();
-await askSingleFile();
+if (projectType == "book"||projectType == "article") {
+    await askSingleFile();
+}
 
 createProject();
